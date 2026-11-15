@@ -1,0 +1,1279 @@
+@import 'tailwindcss';
+
+/*
+ * Tüm renkler, yazı tipleri ve ölçüler burada tanımlanır.
+ * Bileşenlerde ham hex değeri yazmayın; bu tokenları kullanın.
+ */
+@theme {
+  /* Zemin ve yüzeyler */
+  --color-void: #04070b;
+  --color-base: #070b11;
+  --color-surface: #0c121a;
+  --color-raised: #111924;
+  --color-line: rgb(160 222 214 / 0.13);
+  --color-line-strong: rgb(160 222 214 / 0.26);
+
+  /* Metin (koyu zeminde en az 4.5:1 kontrast) */
+  --color-ink: #e8f0f7;
+  --color-ink-muted: #c0cdd8;
+  --color-ink-dim: #9aabbb;
+
+  /* Tek vurgu rengi: açık su yeşili (geçişli kullanımda turkuaza döner) */
+  --color-holo: #6fe9d6;
+  --color-holo-strong: #befaec;
+  --color-holo-deep: #0f786e;
+  --color-aqua-2: #5cc9e8;
+
+  /* Durum renkleri: yalnızca sağlık durumu için */
+  --color-ok: #5ee39a;
+  --color-warn: #f7c35c;
+  --color-crit: #ff7a7a;
+
+  --font-display: 'Sora Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Manrope Variable', ui-sans-serif, system-ui, sans-serif;
+
+  /* Tablet ekranı için okunaklı boyutlar (Tailwind ölçeğinin küçükleri büyütüldü) */
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.35;
+  --text-sm: 0.9375rem;
+  --text-sm--line-height: 1.45;
+  /* Sayılar ve küçük büyük harfli etiketler (adı eski; artık monospace değil). Sora sabit genişlikli rakam destekler: .tabular */
+  --font-mono: 'Sora Variable', ui-sans-serif, system-ui, sans-serif;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-soft: cubic-bezier(0.64, 0, 0.78, 0);
+}
+
+
+@layer base {
+  html {
+    overflow-x: clip;
+    color-scheme: dark;
+    background: var(--color-void);
+  }
+  body {
+    margin: 0;
+    overflow-x: clip;
+    min-height: 100dvh;
+    background: var(--color-void);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-holo);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  ::selection {
+    background: rgb(111 233 214 / 0.3);
+  }
+  button {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
+}
+
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/*
+ * Ana zemin: yalnızca uzay fotoğrafı (public/background.png). Üstündeki koyu perde fotoğrafı neredeyse siyaha
+ * çeker (karamsar uzay görünümü); kenarlar ortadan daha koyudur. Izgara ve renkli ışık yoktur.
+ */
+.app-backdrop {
+  background:
+    radial-gradient(ellipse 120% 90% at 50% 40%, transparent 30%, rgb(0 0 0 / 0.55) 100%),
+    linear-gradient(180deg, rgb(1 2 5 / 0.62), rgb(1 2 5 / 0.8)),
+    url('/background.png') left center / cover no-repeat fixed,
+    #000;
+}
+
+/*
+ * Panel yüzeyi: koyu, su yeşiline çalan cam. Sol üstte su yeşili ışık, altta camın içinden yansıyan turkuaz parıltı;
+ * kenar ışığı su yeşilinden turkuaza geçer (paletin geçişi kutularda da görünür).
+ */
+.panel {
+  background:
+    linear-gradient(155deg, rgb(111 233 214 / 0.11), transparent 40%),
+    linear-gradient(180deg, rgb(8 20 24 / 0.6), rgb(2 6 9 / 0.74));
+  border: 1px solid rgb(111 233 214 / 0.08);
+  border-radius: 18px;
+  box-shadow:
+    inset 0 1px 0.5px rgb(190 250 236 / 0.2),
+    inset 0 -1px 0.5px rgb(92 201 232 / 0.1),
+    inset 0 -30px 46px -32px rgb(92 201 232 / 0.3),
+    0 26px 60px -28px rgb(0 0 0 / 0.9);
+  backdrop-filter: blur(24px) saturate(150%);
+}
+/* Hologram paneli: 3D sahnenin çevresinde daha koyu ama yine cam */
+.panel-solid {
+  background:
+    linear-gradient(155deg, rgb(111 233 214 / 0.08), transparent 40%),
+    linear-gradient(180deg, rgb(1 4 7 / 0.62), rgb(1 4 7 / 0.76));
+}
+/* Kenar ışığı: sol üstte su yeşili, sağ altta turkuaz; ortası sönük */
+.panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  padding: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    150deg,
+    rgb(190 250 236 / 0.8),
+    rgb(111 233 214 / 0.28) 22%,
+    rgb(111 233 214 / 0) 46%,
+    rgb(92 201 232 / 0.06) 70%,
+    rgb(92 201 232 / 0.55)
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+/* Görsel titreşim: yalnızca ilgili öğe sallanır */
+@keyframes buzz {
+  0%, 100% { transform: translateX(0) rotate(0); }
+  10% { transform: translateX(-3px) rotate(-2deg); }
+  20% { transform: translateX(3px) rotate(2deg); }
+  30% { transform: translateX(-3px) rotate(-1.5deg); }
+  40% { transform: translateX(3px) rotate(1.5deg); }
+  50% { transform: translateX(-2px) rotate(-1deg); }
+  60% { transform: translateX(2px) rotate(1deg); }
+  70% { transform: translateX(-1px) rotate(0); }
+}
+@keyframes blink-soft {
+  0%, 100% { opacity: 1; }
+  25%, 75% { opacity: 0.35; }
+}
+.buzz {
+  animation: buzz 0.6s linear 2;
+}
+@media (prefers-reduced-motion: reduce) {
+  .buzz {
+    animation: blink-soft 0.8s linear 2;
+  }
+}
+
+/* Ekran kenarı ışığı */
+@keyframes edge-pulse {
+  0% { opacity: 0; }
+  15% { opacity: 1; }
+  45% { opacity: 0.35; }
+  65% { opacity: 0.9; }
+  100% { opacity: 0; }
+}
+.edge-glow {
+  animation: edge-pulse 1.8s var(--ease-out-soft) forwards;
+}
+
+@keyframes pulse-dot {
+  0% { box-shadow: 0 0 0 0 currentColor; }
+  70% { box-shadow: 0 0 0 7px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+.pulse-dot {
+  animation: pulse-dot 2s ease-out infinite;
+}
+
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgb(160 222 214 / 0.06) 0%,
+    rgb(160 222 214 / 0.14) 50%,
+    rgb(160 222 214 / 0.06) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+  border-radius: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-dot,
+  .skeleton {
+    animation: none;
+  }
+}
+
+/* İnce kaydırma çubuğu */
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(160 222 214 / 0.2) transparent;
+}
+
+/* ---------- Rehber tur (driver.js) temaya uyarlanmış ---------- */
+.driver-popover.vitalis-tour {
+  background: var(--color-raised);
+  color: var(--color-ink);
+  border: 1px solid var(--color-line-strong);
+  border-radius: 16px;
+  padding: 18px 18px 14px;
+  max-width: 340px;
+  box-shadow: 0 30px 60px -20px rgb(0 0 0 / 0.8), 0 0 0 1px rgb(111 233 214 / 0.08);
+  font-family: var(--font-sans);
+}
+.driver-popover.vitalis-tour .driver-popover-title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+}
+.driver-popover.vitalis-tour .driver-popover-description {
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--color-ink-muted);
+  margin-top: 6px;
+}
+.driver-popover.vitalis-tour .driver-popover-progress-text {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-ink-dim);
+}
+.driver-popover.vitalis-tour .driver-popover-footer button {
+  background: transparent;
+  color: var(--color-ink);
+  border: 1px solid var(--color-line-strong);
+  border-radius: 10px;
+  padding: 7px 12px;
+  font-size: 13px;
+  font-family: var(--font-sans);
+  text-shadow: none;
+}
+.driver-popover.vitalis-tour .driver-popover-footer button:hover {
+  background: rgb(111 233 214 / 0.08);
+}
+.driver-popover.vitalis-tour .driver-popover-next-btn {
+  background: var(--color-holo) !important;
+  color: var(--color-void) !important;
+  border-color: transparent !important;
+  font-weight: 600;
+}
+.driver-popover.vitalis-tour .driver-popover-close-btn {
+  color: var(--color-ink-dim);
+}
+/* Tur oku: büyük ve vurgu renginde, kutunun hangi alanı anlattığı ilk bakışta belli olur */
+.driver-popover.vitalis-tour {
+  border-color: rgb(111 233 214 / 0.45);
+}
+.driver-popover.vitalis-tour .driver-popover-arrow {
+  border-width: 11px;
+}
+.driver-popover.vitalis-tour .driver-popover-arrow-side-left.driver-popover-arrow { border-left-color: var(--color-holo); }
+.driver-popover.vitalis-tour .driver-popover-arrow-side-right.driver-popover-arrow { border-right-color: var(--color-holo); }
+.driver-popover.vitalis-tour .driver-popover-arrow-side-top.driver-popover-arrow { border-top-color: var(--color-holo); }
+.driver-popover.vitalis-tour .driver-popover-arrow-side-bottom.driver-popover-arrow { border-bottom-color: var(--color-holo); }
+
+/*
+ * Turun gösterdiği alan: spot ışığının (karartmadaki deliğin) tam kenarında yavaşça atan parlak halka.
+ * Karartmanın üstünde, tur kutusunun altında durur; delik 400 ms'de yeni hedefe kayarken halka da onunla kayar.
+ */
+@keyframes tour-ring {
+  0%, 100% { border-color: rgb(111 233 214 / 0.95); box-shadow: 0 0 0 3px rgb(111 233 214 / 0.12), 0 0 24px 2px rgb(111 233 214 / 0.3); }
+  50% { border-color: rgb(190 250 236 / 1); box-shadow: 0 0 0 5px rgb(111 233 214 / 0.18), 0 0 34px 5px rgb(111 233 214 / 0.42); }
+}
+#tour-ring {
+  position: fixed;
+  z-index: 10001;
+  box-sizing: border-box;
+  border: 2px solid rgb(111 233 214 / 0.95);
+  pointer-events: none;
+  opacity: 0;
+  animation: tour-ring 1.6s ease-in-out infinite;
+  transition:
+    left 400ms var(--ease-out-soft),
+    top 400ms var(--ease-out-soft),
+    width 400ms var(--ease-out-soft),
+    height 400ms var(--ease-out-soft),
+    border-radius 400ms var(--ease-out-soft),
+    opacity 200ms ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  #tour-ring {
+    animation: none;
+    transition: opacity 200ms ease;
+  }
+}
+/* Yaşamsal değerler adımı: bütün göstergeleri kaplayan görünmez alan (köşesi kartlarla aynı) */
+#tour-vitals-zone {
+  position: absolute;
+  z-index: 1;
+  border-radius: 16px;
+  pointer-events: none;
+}
+
+/* Düzenlenebilir arayüz (react-grid-layout) */
+.react-grid-layout {
+  position: relative;
+  transition: height 200ms ease;
+}
+.react-grid-item {
+  transition: transform 220ms var(--ease-out-soft), width 220ms var(--ease-out-soft), height 220ms var(--ease-out-soft);
+}
+/*
+ * Üzerine gelinen bölüm komşularının üstünde çizilir; düğmeleri örtülmez.
+ * Yalnızca klavye odağı (focus-visible) sayılır: fareyle tıklanan bölüm, fare gidince eski katmanına döner.
+ */
+.react-grid-item:has(:focus-visible) {
+  z-index: 15;
+}
+.react-grid-item:hover {
+  z-index: 20;
+}
+.react-grid-item.react-draggable-dragging {
+  transition: none;
+  z-index: 30;
+  will-change: transform;
+}
+.react-grid-item.react-draggable-dragging .tool-move {
+  cursor: grabbing;
+}
+/* Bırakılacak yerin izi */
+.react-grid-item.react-grid-placeholder {
+  z-index: 2;
+  border: 2px solid rgb(111 233 214 / 0.85);
+  border-radius: 18px;
+  background: rgb(111 233 214 / 0.16);
+  box-shadow: 0 0 24px -4px rgb(111 233 214 / 0.5);
+  transition-duration: 100ms;
+  user-select: none;
+}
+
+/* Sabitlenmemiş bölüm: kesik çizgili kenar, içerik soluk; sürükleyerek taşınır */
+.tool-move {
+  outline: 1.5px dashed rgb(111 233 214 / 0.55);
+  outline-offset: -1px;
+  background: rgb(4 7 11 / 0.32);
+  touch-action: none;
+}
+.tool-move-hint {
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+.tool-item:hover .tool-move-hint,
+.react-draggable-dragging .tool-move-hint {
+  opacity: 1;
+}
+
+/* Bölüm düğmeleri (sabitle + kaldır) birlikte görünür: üzerine gelince, klavyeyle odaklanınca,
+   sabitlenmemişken, kaldırma için basılı tutulurken ve rehber turda gösterilirken */
+.tool-item .tool-controls {
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+.tool-item:hover .tool-controls,
+.tool-item:has(:focus-visible) .tool-controls,
+.tool-item:not([data-pinned]) .tool-controls,
+.tool-item .tool-controls:has([data-holding], .driver-active-element) {
+  opacity: 1;
+}
+/* Dokunmatik ekranda üzerine gelme olmadığı için düğmeler ve ipucu hep görünür */
+@media (hover: none) {
+  .tool-item .tool-controls,
+  .tool-move-hint {
+    opacity: 1;
+  }
+}
+
+/* Sabitlemeden tıklanınca düğme ışık gibi üç kez yanıp söner */
+@keyframes pin-glow {
+  0%, 30%, 60%, 100% {
+    background: transparent;
+    box-shadow: 0 0 0 0 rgb(111 233 214 / 0);
+  }
+  15%, 45%, 75% {
+    background: rgb(111 233 214 / 0.4);
+    box-shadow: 0 0 0 3px rgb(111 233 214 / 0.45), 0 0 24px 8px rgb(111 233 214 / 0.75);
+  }
+}
+.pin-glow {
+  animation: pin-glow 1.5s ease-in-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .react-grid-layout,
+  .react-grid-item {
+    transition: none;
+  }
+}
+
+/* Akıcı sürükleme */
+/* Kaydırma çubuğu için yer hep ayrılır: sürükleme sırasında çubuk belirince sayfa daralıp her şey yeniden dizilmez */
+html {
+  /* Ayrılan boşluk yalnızca kaydırılabilir kapta çalışır; yatay taşma yine kapalı kalır */
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+/* Sürüklenen kartın arka plan bulanıklığı her karede yeniden hesaplanmasın diye kapatılır, yerine koyu zemin gelir */
+/* Seçici bilerek güçlü: cam görünümünün kurallarından da önce gelir */
+.react-grid-item.react-draggable-dragging .panel {
+  backdrop-filter: none;
+  background: rgb(13 19 28 / 0.97);
+  transition: none;
+}
+.react-grid-item.react-draggable-dragging .panel::after {
+  transition: none;
+}
+/* Sürüklenen kart hafifçe öne çıkar (gölge yalnızca bir kez çizilir, katman GPU'da taşınır) */
+.react-draggable-dragging .tool-move {
+  outline-color: rgb(111 233 214 / 0.9);
+  box-shadow: 0 28px 60px -22px rgb(0 0 0 / 0.85);
+}
+.react-grid-item.react-grid-placeholder {
+  transition: transform 140ms var(--ease-out-soft);
+}
+body.tool-dragging,
+body.tool-dragging * {
+  cursor: grabbing !important;
+}
+
+.tool-remove button {
+  -webkit-touch-callout: none;
+}
+@keyframes remove-hint {
+  0% { opacity: 0; translate: 0 -4px; }
+  12%, 78% { opacity: 1; translate: 0 0; }
+  100% { opacity: 0; translate: 0 0; }
+}
+.remove-hint {
+  animation: remove-hint 1.6s ease both;
+}
+
+/* Basılı tutarken içerik yavaşça soluklaşır; süre dolunca bölüm küçülerek kaybolur */
+.tool-body {
+  transition: opacity 260ms ease, filter 260ms ease;
+}
+.tool-frame[data-holding] .tool-body {
+  opacity: 0.45;
+  filter: saturate(0.4);
+  transition-duration: 1000ms;
+  transition-timing-function: linear;
+}
+.tool-frame {
+  transition: opacity 320ms var(--ease-in-soft);
+}
+.tool-frame[data-leaving] {
+  opacity: 0;
+  pointer-events: none;
+}
+.tool-frame[data-leaving] .tool-body {
+  transition: transform 320ms var(--ease-in-soft);
+}
+@media (prefers-reduced-motion: reduce) {
+  .tool-frame[data-leaving] .tool-body {
+    transform: none !important;
+  }
+}
+
+/* ───────────── Sıvı cam ───────────── */
+
+/* Bölüm düğmeleri: küçük cam kapsüller; basınca jöle gibi esneyip yaylanarak geri döner */
+.tool-controls button {
+  background: rgb(255 255 255 / 0.08);
+  border-color: rgb(255 255 255 / 0.2);
+  backdrop-filter: blur(14px) saturate(170%);
+  box-shadow:
+    inset 0 1px 0.5px rgb(255 255 255 / 0.32),
+    0 8px 20px -8px rgb(0 0 0 / 0.75);
+  transition:
+    transform 460ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
+}
+.tool-controls button:hover {
+  background: rgb(255 255 255 / 0.15);
+}
+.tool-pin button[aria-pressed='true'] {
+  background: rgb(111 233 214 / 0.18);
+  border-color: rgb(111 233 214 / 0.5);
+}
+.tool-controls button:active {
+  transform: scale(0.88);
+}
+/* Kaldırmak için basılı tutarken düğme hafifçe şişer */
+.tool-remove button[data-holding] {
+  transform: scale(1.12);
+  background: rgb(255 122 122 / 0.16);
+}
+
+/* İpuçları da cam */
+[role='tooltip'] {
+  background: rgb(20 30 44 / 0.72);
+  border-color: rgb(255 255 255 / 0.14);
+  backdrop-filter: blur(18px) saturate(170%);
+}
+
+/* Saydamlığı azaltma tercihi olan kullanıcıda cam, okunaklı koyu yüzeye döner */
+@media (prefers-reduced-transparency: reduce) {
+  .panel,
+  .panel-solid {
+    background: linear-gradient(180deg, rgb(17 25 36 / 0.97), rgb(10 15 22 / 0.98));
+    backdrop-filter: none;
+  }
+}
+
+/* İpucu kutusu: açıldığı yönden hafifçe kayarak belirir */
+@keyframes tooltip-in-bottom {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes tooltip-in-top {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+.tooltip-pop[data-side='bottom'] {
+  animation: tooltip-in-bottom 150ms ease-out both;
+}
+.tooltip-pop[data-side='top'] {
+  animation: tooltip-in-top 150ms ease-out both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tooltip-pop[data-side] {
+    animation-name: none;
+  }
+}
+
+/* Sürükleme matrisi: bölümün bırakılabileceği hücreler ve dış sınır (yalnızca sürüklerken görünür) */
+.drag-matrix {
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+.drag-matrix[data-active] {
+  opacity: 1;
+}
+/* Hücre çerçeveleri: bölümlerin oturduğu yerler */
+.matrix-cell {
+  fill: rgb(111 233 214 / 0.035);
+  stroke: rgb(111 233 214 / 0.3);
+  stroke-width: 1;
+}
+/* Hücre köşeleri (boşlukların kesişimi) */
+.matrix-dot-major {
+  fill: rgb(111 233 214 / 0.85);
+}
+/* Dış sınır: bölümler bu çerçevenin dışına çıkamaz */
+.matrix-bounds {
+  fill: none;
+  stroke: rgb(111 233 214 / 0.9);
+  stroke-width: 2;
+  stroke-dasharray: 10 6;
+  filter: drop-shadow(0 0 6px rgb(111 233 214 / 0.55));
+}
+/* Başka bir bölümün üstü: kırmızı alan ve uyarı; bırakılırsa bölüm son geçerli yere oturur */
+.drag-blocked {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px dashed rgb(255 122 122 / 0.85);
+  border-radius: 18px;
+  background: rgb(255 122 122 / 0.12);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+.drag-blocked[data-show] {
+  opacity: 1;
+}
+.drag-blocked span {
+  max-width: 90%;
+  border-radius: 9999px;
+  background: rgb(20 12 14 / 0.9);
+  padding: 4px 12px;
+  color: var(--color-crit);
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+}
+.react-grid-item.react-draggable-dragging[data-blocked] .tool-move {
+  outline-color: rgb(255 122 122 / 0.9);
+}
+
+/* Sürüklerken sayfada metin seçilmez */
+.tool-move,
+.tool-move *,
+body.tool-dragging {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Geri al bildirimindeki süre çubuğu: bildirim kapanana kadar azalır (imleç üzerindeyken de) */
+@keyframes toast-progress {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+.toast-progress {
+  animation: toast-progress linear forwards;
+}
+
+/* Sıfırlama onayının roket efekti: çizgi film tarzı alev, duman ve kıvılcım */
+@keyframes flame-flicker {
+  0% { transform: scale(1, 1); }
+  50% { transform: scale(0.93, 1.12); }
+  100% { transform: scale(1.05, 0.9); }
+}
+.flame-flicker {
+  transform-origin: 50% 0;
+  animation: flame-flicker 110ms ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 14px rgb(255 140 50 / 0.75));
+}
+.rocket-puff {
+  background: radial-gradient(circle at 34% 30%, #f3f6fb, #c7d1de 58%, #8e9cb0);
+  box-shadow: inset -6px -8px 14px rgb(60 72 92 / 0.35);
+}
+@keyframes rocket-spark {
+  from { transform: translate(0, 0); opacity: 1; }
+  to { transform: translate(var(--dx), 70px); opacity: 0; }
+}
+.rocket-spark {
+  background: #ffd166;
+  box-shadow: 0 0 6px 2px rgb(255 190 80 / 0.8);
+  animation: rocket-spark 0.5s linear infinite;
+}
+
+/* "Tüm bölümler gizli" kartı: 1 saniyede yavaşça belirir */
+@keyframes empty-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+.empty-in {
+  animation: empty-in 1000ms var(--ease-out-soft) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .empty-in {
+    animation: empty-in-fade 1000ms ease both;
+  }
+  @keyframes empty-in-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}
+
+/* ───────────── Yan yana sayfalar ───────────── */
+/*
+ * Sayfalar yatayda kesilir (dikey taşan düğme ve gölgeler görünür kalır); komşu sayfa aradaki boşlukta saklı kalır.
+ * Kesme kenarı iki yandan 32 px dışarıdadır (negatif kenar boşluğu + iç boşluk): matrisin ızgaradan taşan dış
+ * sınırı ve kart gölgeleri kesilmez. (Chrome tek eksenli kesmede overflow-clip-margin uygulamıyor.)
+ */
+.page-viewport {
+  --page-gap: 72px;
+  overflow-x: clip;
+  margin-inline: -32px;
+  padding-inline: 32px;
+}
+.page-track {
+  gap: var(--page-gap);
+  transition: transform 520ms var(--ease-out-soft);
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-track {
+    transition-duration: 1ms;
+  }
+}
+
+/* Sayfa okları: ekranın orta solunda ve sağında, içerik alanının hemen dışında; belirgin cam düğmeler */
+.page-arrow-wrap {
+  position: fixed;
+  top: 50%;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  transform: translateY(-50%);
+}
+.page-arrow-prev {
+  left: max(12px, calc((100vw - 1832px) / 2 + 12px));
+}
+.page-arrow-next {
+  right: max(12px, calc((100vw - 1832px) / 2 + 12px));
+}
+/* Dar ekranda yan boşluk yoktur: oklar küçülür ve alt köşelere iner */
+@media (max-width: 639px) {
+  .page-arrow-wrap {
+    top: auto;
+    bottom: 14px;
+    transform: none;
+  }
+  .page-arrow-wrap .page-arrow {
+    width: 44px;
+    height: 44px;
+  }
+  .page-arrow-wrap .page-dots {
+    display: none;
+  }
+}
+.page-arrow {
+  display: flex;
+  width: 56px;
+  height: 56px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border: 1.5px solid rgb(111 233 214 / 0.6);
+  background: rgb(14 22 33 / 0.82);
+  color: var(--color-holo);
+  box-shadow:
+    0 0 0 4px rgb(111 233 214 / 0.1),
+    0 0 22px -4px rgb(111 233 214 / 0.45),
+    0 14px 32px -12px rgb(0 0 0 / 0.85),
+    inset 0 1px 0.5px rgb(255 255 255 / 0.25);
+  backdrop-filter: blur(14px) saturate(170%);
+  transition:
+    transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    background-color 160ms ease,
+    box-shadow 200ms ease,
+    color 160ms ease;
+}
+.page-arrow:hover {
+  background: rgb(111 233 214 / 0.18);
+  color: var(--color-holo-strong);
+  box-shadow:
+    0 0 0 6px rgb(111 233 214 / 0.16),
+    0 0 34px -2px rgb(111 233 214 / 0.6),
+    0 14px 32px -12px rgb(0 0 0 / 0.85),
+    inset 0 1px 0.5px rgb(255 255 255 / 0.3);
+  transform: scale(1.07);
+}
+.page-arrow:active {
+  transform: scale(0.92);
+}
+/* Hangi sayfada olunduğunu gösteren noktalar: etkin sayfa uzun ve parlak */
+.page-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  border: 1px solid rgb(255 255 255 / 0.08);
+  border-radius: 9999px;
+  background: rgb(10 16 24 / 0.6);
+  backdrop-filter: blur(10px);
+}
+.page-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: rgb(167 182 198 / 0.45);
+  transition:
+    width 260ms var(--ease-out-soft),
+    background-color 260ms ease;
+}
+.page-dots span[data-active] {
+  width: 16px;
+  background: var(--color-holo);
+}
+
+/*
+ * Yazdırılan rapor (PDF olarak kaydet): ekranda gizli; yazdırırken sayfanın tek içeriği (doctor/PrintReport.tsx).
+ * Başlık bandı uygulamanın lacivert/su yeşili görünümünde, gövde kâğıtta okunur açık zeminde. Renkler yazdırmada korunur.
+ */
+#print-report {
+  display: none;
+}
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+  html,
+  body {
+    background: #fff !important;
+  }
+  body > :not(#print-report) {
+    display: none !important;
+  }
+  #print-report {
+    display: block;
+    color: #1b2533;
+    font-family: 'Inter Variable', system-ui, sans-serif;
+    font-size: 10.5pt;
+    line-height: 1.4;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  #print-report h1,
+  #print-report h2 {
+    font-family: 'Space Grotesk Variable', system-ui, sans-serif;
+    margin: 0;
+  }
+  #print-report .pr-band {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 20px;
+    border-radius: 14px;
+    background: linear-gradient(120deg, #07111f 0%, #0d2238 60%, #123a52 100%);
+    color: #e8f3fb;
+  }
+  #print-report .pr-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  #print-report .pr-brand-name {
+    margin: 0;
+    font-family: 'Space Grotesk Variable', system-ui, sans-serif;
+    font-size: 15pt;
+    font-weight: 600;
+    color: #ffffff;
+  }
+  #print-report .pr-brand-sub {
+    margin: 0;
+    font-size: 8.5pt;
+    color: #6fe9d6;
+    letter-spacing: 0.04em;
+  }
+  #print-report .pr-title {
+    text-align: right;
+  }
+  #print-report .pr-title h1 {
+    font-size: 13pt;
+    font-weight: 600;
+    color: #ffffff;
+  }
+  #print-report .pr-title p {
+    margin: 2px 0 0;
+    font-size: 9pt;
+    color: #b8d3e4;
+  }
+  #print-report .pr-summary {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin: 12px 0;
+  }
+  #print-report .pr-stat {
+    border: 1px solid #dbe3ec;
+    border-top-width: 3px;
+    border-top-color: #6fe9d6;
+    border-radius: 10px;
+    padding: 8px 10px;
+    background: #f7fafc;
+  }
+  #print-report .pr-label {
+    margin: 0;
+    font-size: 8.5pt;
+    color: #5b6b7e;
+  }
+  #print-report .pr-big {
+    margin: 2px 0 0;
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-size: 16pt;
+    font-weight: 600;
+    color: #0f786e;
+  }
+  #print-report .pr-small {
+    margin: 4px 0 0;
+    font-size: 9pt;
+    color: #1b2533;
+  }
+  #print-report .pr-lead {
+    margin: 0 0 10px;
+    padding: 10px 12px;
+    border-left: 3px solid #6fe9d6;
+    background: #eef8fd;
+    border-radius: 0 8px 8px 0;
+  }
+  #print-report .pr-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9.5pt;
+  }
+  #print-report .pr-table th {
+    text-align: left;
+    font-weight: 600;
+    font-size: 8.5pt;
+    color: #ffffff;
+    background: #0d2238;
+    padding: 6px 8px;
+  }
+  #print-report .pr-table th:first-child {
+    border-radius: 8px 0 0 0;
+  }
+  #print-report .pr-table th:last-child {
+    border-radius: 0 8px 0 0;
+  }
+  #print-report .pr-table td {
+    padding: 6px 8px;
+    border-bottom: 1px solid #e6ebf1;
+    vertical-align: middle;
+  }
+  #print-report .pr-table tbody tr:nth-child(even) td {
+    background: #f7fafc;
+  }
+  #print-report .pr-table tr {
+    break-inside: avoid;
+  }
+  #print-report .num {
+    text-align: right;
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    white-space: nowrap;
+  }
+  #print-report .strong {
+    font-weight: 600;
+  }
+  #print-report .pr-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-right: 6px;
+    border-radius: 50%;
+  }
+  #print-report .pr-unit {
+    display: block;
+    padding-left: 14px;
+    font-size: 8pt;
+    color: #6b7a8c;
+    font-family: 'Inter Variable', system-ui, sans-serif;
+    font-weight: 400;
+  }
+  #print-report .pr-bar {
+    display: block;
+    width: 110px;
+    height: 10px;
+  }
+  #print-report .pr-ref {
+    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+    font-size: 8pt;
+    color: #5b6b7e;
+  }
+  #print-report .pr-pill {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 999px;
+    font-size: 8.5pt;
+    font-weight: 600;
+  }
+  #print-report .pr-trend {
+    white-space: nowrap;
+    color: #3d4c5e;
+  }
+  #print-report .pr-note {
+    margin: 6px 0 0;
+    font-size: 8pt;
+    color: #6b7a8c;
+  }
+  #print-report .pr-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 14px;
+    break-inside: avoid;
+  }
+  #print-report .pr-cols section {
+    border: 1px solid #dbe3ec;
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+  #print-report .pr-cols h2 {
+    font-size: 10.5pt;
+    color: #0f786e;
+    margin-bottom: 6px;
+  }
+  #print-report .pr-cols ul {
+    margin: 0;
+    padding-left: 16px;
+  }
+  #print-report .pr-cols li {
+    margin: 3px 0;
+  }
+  #print-report .pr-none {
+    margin: 0;
+    color: #6b7a8c;
+  }
+  #print-report .pr-foot {
+    margin-top: 14px;
+    padding-top: 8px;
+    border-top: 1px solid #dbe3ec;
+    font-size: 8pt;
+    color: #6b7a8c;
+  }
+}
+
+/* ───────────── Health Atlas: marka, salınım ve öne çıkma ───────────── */
+
+/* Marka yazısı: açık su yeşilinden turkuaza geçiş */
+.brand-text {
+  background: linear-gradient(100deg, #d4fff5 0%, #6fe9d6 45%, #5cc9e8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/*
+ * Bölümler ekranda çok yavaş yukarı aşağı salınır (her biri farklı evrede, --float-delay ile).
+ * Üzerine gelinen bölüm hafifçe öne çıkar. Sürüklerken, taşıma modunda ve "hareketi azalt" ayarında salınım durur.
+ */
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+.tool-item .tool-frame {
+  animation: float-y 8s ease-in-out infinite;
+  animation-delay: var(--float-delay, 0s);
+}
+/* Öne çıkma geçişi, X'e basılı tutarken yavaşça solma geçişini ezmemeli: üçü birlikte yazılır */
+.tool-item .tool-body {
+  transition:
+    opacity 260ms ease,
+    filter 260ms ease,
+    transform 280ms var(--ease-out-soft);
+}
+.tool-item .tool-frame[data-holding] .tool-body {
+  transition:
+    opacity 1000ms linear,
+    filter 1000ms linear,
+    transform 280ms var(--ease-out-soft);
+}
+.tool-item[data-pinned]:hover {
+  z-index: 6;
+}
+.tool-item[data-pinned]:hover .tool-body {
+  transform: translateY(-3px) scale(1.012);
+}
+/* Basılı tutarken ve kaybolurken salınım olduğu yerde durur (bölüm zıplamaz, X düğmesi parmağın altından kaçmaz) */
+.tool-frame[data-holding],
+.tool-frame[data-leaving] {
+  animation-play-state: paused;
+}
+.tool-item[data-pinned]:hover .tool-frame[data-leaving] .tool-body,
+.tool-frame[data-leaving] .tool-body {
+  transform: scale(0.96);
+}
+.react-draggable-dragging .tool-frame,
+.tool-item:not([data-pinned]) .tool-frame {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tool-item .tool-frame {
+    animation: none;
+  }
+  .tool-item[data-pinned]:hover .tool-body {
+    transform: none;
+  }
+}
+/*
+ * Zihinsel sağlık sayfasında (ve video arka planlı bölüm başka sayfaya taşınırsa orada da) bölümler salınmaz ve üzerine
+ * gelince büyümez: kutudaki video kayıyor ve bulanıklaşıyor gibi görünüyordu.
+ */
+[data-page='1'] .tool-item .tool-frame,
+.tool-item .tool-frame:has([data-video-backdrop]) {
+  animation: none;
+}
+[data-page='1'] .tool-item[data-pinned]:hover .tool-body,
+.tool-item[data-pinned]:hover .tool-frame:has([data-video-backdrop]) .tool-body {
+  transform: none;
+}
+
+/*
+ * Videolu kutular: başlık çerçevesiz, büyük harfle orta-altta durur; açıklama imleç gelince (ya da klavye odağı kutuya girince)
+ * aşağıdan kayarak, netleşerek ve satır satır gecikmeyle belirir. Başlık biraz yukarı kalkar, video hafifçe yaklaşır.
+ * Dokunmatik ekranda (üzerine gelme yok) açıklama her zaman görünür; hareketi azaltma tercihinde geçiş yoktur.
+ */
+.reveal-rows {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 520ms var(--ease-out-soft);
+}
+.reveal-rows > * {
+  min-height: 0;
+  overflow: hidden;
+}
+.reveal-line {
+  opacity: 0;
+  transform: translateY(10px);
+  filter: blur(4px);
+  transition:
+    opacity 380ms ease,
+    transform 520ms var(--ease-out-soft),
+    filter 380ms ease;
+}
+.reveal-glass {
+  transition: transform 520ms var(--ease-out-soft);
+}
+[data-video-backdrop] video,
+[data-video-backdrop] img {
+  transition: transform 1400ms var(--ease-out-soft);
+}
+.reveal-tile:is(:hover, :focus-within) .reveal-rows {
+  grid-template-rows: 1fr;
+}
+.reveal-tile:is(:hover, :focus-within) .reveal-line {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  transition-delay: calc(var(--i, 0) * 70ms + 90ms);
+}
+.reveal-tile:is(:hover, :focus-within) .reveal-glass {
+  transform: translateY(-3px);
+}
+.reveal-tile:hover [data-video-backdrop] :is(video, img) {
+  transform: scale(1.04);
+}
+@media (hover: none) {
+  .reveal-rows {
+    grid-template-rows: 1fr;
+  }
+  .reveal-line {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal-rows,
+  .reveal-line,
+  .reveal-glass,
+  [data-video-backdrop] :is(video, img) {
+    transition: none;
+  }
+  .reveal-line {
+    transform: none;
+    filter: none;
+  }
+  .reveal-tile:is(:hover, :focus-within) .reveal-glass,
+  .reveal-tile:hover [data-video-backdrop] :is(video, img) {
+    transform: none;
+  }
+}
+
+/* Bölüm açıklaması: bölümün üzerinde biraz bekleyince altında beliren kısa not */
+@keyframes tool-info-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.tool-info {
+  animation: tool-info-in 180ms var(--ease-out-soft);
+}
+
+/* ───────────── Gösterge kartları: her kartın kendi rengi (--accent) ───────────── */
+
+/* Kartın zemininde kendi renginde parıltı: sağ altta (grafiğin arkasında) güçlü, solda soluk */
+.vital-card {
+  border-color: color-mix(in srgb, var(--accent) 20%, transparent);
+  transition: border-color 200ms ease;
+}
+.vital-card:hover {
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+}
+.vital-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(70% 130% at 100% 100%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%),
+    linear-gradient(100deg, color-mix(in srgb, var(--accent) 8%, transparent), transparent 45%);
+}
+/* Kenar ışığı da kartın renginde */
+.vital-card::after {
+  background: linear-gradient(
+    150deg,
+    color-mix(in srgb, var(--accent) 70%, white),
+    color-mix(in srgb, var(--accent) 30%, transparent) 22%,
+    transparent 48%,
+    color-mix(in srgb, var(--accent) 8%, transparent) 70%,
+    color-mix(in srgb, var(--accent) 65%, transparent)
+  );
+}
+.vital-icon {
+  color: var(--accent);
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 55%, transparent));
+}
+
+/* ───────────── Hareketli mini grafik ───────────── */
+
+/* Açılışta çizgi soldan sağa çizilir, altındaki alan belirir */
+@keyframes trend-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes trend-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.trend-line {
+  stroke-dasharray: 1;
+  animation: trend-draw 1.6s var(--ease-out-soft) both;
+}
+.trend-area {
+  animation: trend-fade 1.6s ease both;
+}
+/* Çizgi boyunca dolaşan ışık (her kartta farklı evrede: --scan-delay) */
+@keyframes trend-scan {
+  from { stroke-dashoffset: 0.12; }
+  to { stroke-dashoffset: -1.05; }
+}
+.trend-scan {
+  stroke-dasharray: 0.12 1.2;
+  stroke-dashoffset: 0.12;
+  animation: trend-scan 3.8s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  animation-delay: var(--scan-delay, 0s);
+}
+/* Son ölçüm noktası nabız gibi atar */
+@keyframes trend-ping {
+  from { transform: scale(1); opacity: 0.9; }
+  to { transform: scale(3.4); opacity: 0; }
+}
+.trend-ping {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: trend-ping 1.8s ease-out infinite;
+}
+/* Grafiğin üzerine gelince parlar: basılabildiği belli olur */
+.trend-button svg {
+  transition: filter 200ms ease;
+}
+.trend-button:hover svg,
+.trend-button:focus-visible svg {
+  filter: brightness(1.3) drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 60%, transparent));
+}
+@media (prefers-reduced-motion: reduce) {
+  .trend-line,
+  .trend-area {
+    animation: none;
+  }
+  .trend-scan,
+  .trend-ping {
+    display: none;
+  }
+}
+
+/* Mini grafikten gelinince gösterge gezgini kısa bir süre parlar: hangi karta gelindiği ilk bakışta belli olur */
+@keyframes explorer-flash {
+  0% { box-shadow: inset 0 0 0 2px rgb(111 233 214 / 0); }
+  25% { box-shadow: inset 0 0 0 2px rgb(111 233 214 / 0.9), inset 0 0 40px -10px rgb(111 233 214 / 0.5); }
+  100% { box-shadow: inset 0 0 0 2px rgb(111 233 214 / 0); }
+}
+.explorer-flash {
+  z-index: 31;
+  animation: explorer-flash 1.6s ease-out both;
+}

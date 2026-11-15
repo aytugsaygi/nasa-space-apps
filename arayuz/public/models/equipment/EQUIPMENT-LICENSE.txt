@@ -1,0 +1,16 @@
+Hologram antrenörün cihaz modelleri (Poly Pizza üzerinden indirildi; dosyalar değiştirilmeden kopyalandı):
+
+- barbell.glb: "Barbell" by J-Toastie - CC BY 3.0
+  https://poly.pizza/m/S3myL1W9d7
+- bike.glb: "Exercise Bike" by Dave Edwards - CC BY 3.0
+  https://poly.pizza/m/9DwoznfSPHY
+- bench-set.glb: "Exercise Equipment" by sirkitree - CC BY 3.0
+  https://poly.pizza/m/e9qDJpbSTxf
+- treadmill.glb: "Treadmill" by CreativeTrio - CC0 1.0 (kamu malı)
+  https://poly.pizza/m/9hYy4Zmk67
+
+Lisanslar: https://creativecommons.org/licenses/by/3.0/ ve https://creativecommons.org/publicdomain/zero/1.0/
+
+Uygulamada (src/sport/Equipment.tsx) modellerin malzemeleri hologram malzemesiyle değiştirilir, boyutları ve
+konumları figüre göre ayarlanır; bisikletin pedal kolları ve volanı ayrı döndürülür. bench-set.glb içindeki yerdeki
+bar gösterilmez. Bu değişiklikler dosyalara değil, çizime uygulanır.

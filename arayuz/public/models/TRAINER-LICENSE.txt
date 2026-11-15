@@ -1,0 +1,13 @@
+trainer-female.glb ve trainer-male.glb aşağıdaki paketten türetilmiştir:
+
+- Universal Base Characters (Standard), Quaternius - CC0 1.0 Universal (kamu malı)
+  https://quaternius.com/packs/universalbasecharacters.html
+  https://creativecommons.org/publicdomain/zero/1.0/
+
+Kullanılan dosyalar: Superhero_Female_FullBody.gltf ve Superhero_Male_FullBody.gltf ("Godot - UE" klasörü).
+
+Yapılan değişiklikler: yalnızca gövde mesh'i, iskelet ve deri ağırlıkları bırakıldı; göz ve kaş parçaları,
+malzemeler, dokular, UV ve köşe renkleri çıkarıldı (scripts/strip-trainer-model.py). Hologram malzemesi ve
+hareketler uygulamanın kodundadır (src/sport).
+
+CC0 atıf istemez; kaynağı yine de belirtiyoruz.

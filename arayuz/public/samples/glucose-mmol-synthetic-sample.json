@@ -1,0 +1,52 @@
+[
+ {
+  "date": "2026-11-04T07:30:00Z",
+  "glucose_mmol": 4.8,
+  "note": "synthetic sample, not NASA data"
+ },
+ {
+  "date": "2026-11-05T07:30:00Z",
+  "glucose_mmol": 5.0,
+  "note": "synthetic sample, not NASA data"
+ },
+ {
+  "date": "2026-11-06T07:30:00Z",
+  "glucose_mmol": 4.8,
+  "note": "synthetic sample, not NASA data"
+ },
+ {
+  "date": "2026-11-07T07:30:00Z",
+  "glucose_mmol": 4.5,
+  "note": "synthetic sample, not NASA data"
+ },
+ {
+  "date": "2026-11-08T07:30:00Z",
+  "glucose_mmol": 4.1,
+  "note": "synthetic sample, not NASA data"
+ },
+ {
+  "date": "2026-11-09T07:30:00Z",
+  "glucose_mmol": 4.6,
+  "note": "synthetic sample, not NASA data"
+ },
+ {
+  "date": "2026-11-10T07:30:00Z",
+  "glucose_mmol": 5.3,
+  "note": "synthetic sample, not NASA data"
+ },
+ {
+  "date": "2026-11-11T07:30:00Z",
+  "glucose_mmol": 4.7,
+  "note": "synthetic sample, not NASA data"
+ },
+ {
+  "date": "2026-11-12T07:30:00Z",
+  "glucose_mmol": 4.1,
+  "note": "synthetic sample, not NASA data"
+ },
+ {
+  "date": "2026-11-13T07:30:00Z",
+  "glucose_mmol": 4.4,
+  "note": "synthetic sample, not NASA data"
+ }
+]

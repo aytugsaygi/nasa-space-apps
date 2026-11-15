@@ -1,0 +1,28 @@
+/*
+ * Görsel karşılaştırmada gizlenen, her açılışta ya da saatle değişen öğeler:
+ * - 3D sahne ve görev saati
+ * - gösterge kartlarının değeri ve durumu (simülasyon canlı dalgalanır; radyasyonda kariyer oranı da değişir)
+ * - yapılacaklar listesinin içeriği (sıra, su miktarı ve gecikenler günün saatine göre değişir)
+ * - bildirim ve takvim rozetleri (okunmamış uyarı ve geciken kontrol sayısı saate göre değişir)
+ * - günün bilgisi metni ve kaynağı (listeye bilgi eklendikçe o güne düşen bilgi değişir)
+ * - açılan bildirimler (sağ üstteki uyarılar ve sağ alttaki mesaj bildirimleri; ne zaman kapanacakları zamanlamaya bağlıdır)
+ * Kartların çerçevesi, adı, birimi ve yerleşimi karşılaştırılmaya devam eder.
+ */
+canvas,
+header dd.font-mono,
+[data-vital-card] [data-volatile],
+[data-daily-fact] p,
+[data-daily-fact] a,
+#tour-todo ul,
+#tour-todo .tabular,
+#tour-alerts > span,
+#schedule-button > span,
+[data-sonner-toaster],
+[data-inbox] {
+  visibility: hidden !important;
+}
+
+/* Durum halkası (dikkat/kritik) değere bağlı olarak gelip gider */
+[data-vital-card] {
+  --tw-ring-shadow: 0 0 #0000 !important;
+}

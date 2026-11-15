@@ -1,0 +1,22 @@
+anatomy.glb, anatomy-names.json
+
+Bu model aşağıdaki kaynaklardan türetilmiştir ve CC BY-SA 4.0 lisansıyla paylaşılır:
+https://creativecommons.org/licenses/by-sa/4.0/
+
+- Z-Anatomy - The libre 3D atlas of anatomy - CC-BY-SA 4.0
+  https://github.com/Z-Anatomy/Models-of-human-anatomy
+- BodyParts3D - The Database Center for Life Science - CC-BY-SA 2.1 Japan
+  https://dbarchive.biosciencedbc.jp/en/bodyparts3d/download.html
+- Yapı adları: Terminologia Anatomica 2 (Z-Anatomy TA2.csv)
+
+Yapılan değişiklikler: dış yüzey bölgeleri, kas ve iskelet yapıları seçildi;
+dış yüzey 8 vücut bölgesine gruplandı; modeller sadeleştirildi
+(decimate) ve GLB olarak dışa aktarıldı (scripts/export-zanatomy.py). Kalp ve damar
+katmanı sonradan çıkarıldı (scripts/strip-glb-layer.mjs).
+
+Kullanılmayan parçalar:
+- Ticari olmayan (NC) lisanslı modeller: iç kulak (University of Dundee, CC BY-NC-SA 4.0)
+  ve böbrek (Lissie Cowley, CC BY-NC 4.0)
+- Lisansı belirtilmemiş "White matter" modeli
+- Görünürlük ve sunum nedeniyle: organları ve omuriliği örten zarlar, kas fasyaları,
+  lenf düğümleri, dış genital organlar
